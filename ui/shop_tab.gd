@@ -2,13 +2,14 @@ extends VBoxContainer
 
 signal hint_purchased()
 
-const HINT_BASE_COST: float = 50.0
-const HINT_COST_SCALING: float = 1.5
+const HINT_BASE_COST: float = 80.0
+const HINT_COST_SCALING: float = 2.0
 
 var _hint_purchases: int = 0
 var hint_button: Button
 
 func _ready() -> void:
+	_hint_purchases = 0
 	hint_button = Button.new()
 	hint_button.icon = load("res://assets/icons/hint.svg")
 	hint_button.expand_icon = false
@@ -32,8 +33,14 @@ func _on_hint_pressed() -> void:
 	var cost: float = _hint_cost()
 	if Economy.coins < cost:
 		return
+	_hint_purchases += 1
 	Economy.coins -= cost
 	Economy.coins_changed.emit(Economy.coins)
-	_hint_purchases += 1
 	SoundManager.purchase()
 	hint_purchased.emit()
+
+func reset_board_session() -> void:
+	_hint_purchases = 0
+	if hint_button:
+		hint_button.text = _hint_label()
+		hint_button.disabled = Economy.coins < _hint_cost()
