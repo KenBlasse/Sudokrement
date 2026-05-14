@@ -6,3 +6,4 @@ export_credentials.cfg
 *.translation
 .superpowers/
 reports/
+.claude/

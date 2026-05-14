@@ -1,5 +1,9 @@
 extends HBoxContainer
 
+const COIN_COLOR: Color = Color(1, 0.8, 0.1, 1)
+const PRESTIGE_COLOR: Color = Color(1, 0, 0.67, 1)
+const TIMER_COLOR: Color = Color(0, 0.94, 1, 1)
+
 @onready var coins_label: Label = $CoinsLabel
 @onready var prestige_label: Label = $PrestigeLabel
 @onready var timer_label: Label = $TimerLabel
@@ -7,8 +11,16 @@ extends HBoxContainer
 var _elapsed: float = 0.0
 
 func _ready() -> void:
+	coins_label.add_theme_color_override("font_color", COIN_COLOR)
+	coins_label.add_theme_font_size_override("font_size", 20)
+	prestige_label.add_theme_color_override("font_color", PRESTIGE_COLOR)
+	prestige_label.add_theme_font_size_override("font_size", 18)
+	timer_label.add_theme_color_override("font_color", TIMER_COLOR)
+	timer_label.add_theme_font_size_override("font_size", 18)
 	Economy.coins_changed.connect(_on_coins_changed)
 	_on_coins_changed(Economy.coins)
+	SkillTree.stars_changed.connect(_on_stars_changed)
+	_on_stars_changed(SkillTree.stars)
 	var diff_btn: OptionButton = $DifficultyButton
 	diff_btn.add_item("Casual (×1.0)", 0)
 	diff_btn.add_item("Standard (×1.5)", 1)
@@ -24,7 +36,17 @@ func _process(delta: float) -> void:
 	timer_label.text = "%02d:%02d" % [m, s]
 
 func _on_coins_changed(new_total: float) -> void:
-	coins_label.text = "Coins: %d" % int(new_total)
+	coins_label.text = "%d" % int(new_total)
+	_pop(coins_label)
+
+func _pop(label: Label) -> void:
+	var t := label.create_tween()
+	t.tween_property(label, "scale", Vector2(1.25, 1.25), 0.08).from(Vector2(1, 1))
+	t.tween_property(label, "scale", Vector2(1.0, 1.0), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	label.pivot_offset = label.size * 0.5
+
+func _on_stars_changed(new_total: int) -> void:
+	prestige_label.text = "%d" % new_total
 
 func reset_timer() -> void:
 	_elapsed = 0.0

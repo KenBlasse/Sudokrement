@@ -21,6 +21,7 @@ Economy="*res://systems/economy.gd"
 SaveSystem="*res://systems/save_system.gd"
 SkillTree="*res://systems/skill_tree.gd"
 PrestigeManager="*res://systems/prestige_manager.gd"
+SoundManager="*res://systems/sound_manager.gd"
 
 [display]
 
@@ -33,7 +34,12 @@ window/stretch/aspect="expand"
 
 enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
 
+[gui]
+
+theme/custom="res://assets/themes/neon.tres"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.04, 0.03, 0.09, 1)

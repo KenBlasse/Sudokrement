@@ -10,16 +10,30 @@
 script = ExtResource("1")
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_constants/separation = 12
+offset_left = 16.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = -12.0
 
 [node name="TopBar" parent="." instance=ExtResource("2")]
 
-[node name="BoardContainer" type="CenterContainer" parent="."]
+[node name="ContentRow" type="HBoxContainer" parent="."]
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="LeftCol" type="VBoxContainer" parent="ContentRow"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="BoardContainer" type="CenterContainer" parent="ContentRow/LeftCol"]
 size_flags_vertical = 3
 
-[node name="SudokuBoard" parent="BoardContainer" instance=ExtResource("3")]
+[node name="SudokuBoard" parent="ContentRow/LeftCol/BoardContainer" instance=ExtResource("3")]
 
-[node name="NumberPadContainer" type="CenterContainer" parent="."]
+[node name="NumberPadContainer" type="CenterContainer" parent="ContentRow/LeftCol"]
 
-[node name="NumberPad" parent="NumberPadContainer" instance=ExtResource("4")]
+[node name="NumberPad" parent="ContentRow/LeftCol/NumberPadContainer" instance=ExtResource("4")]
 
-[node name="BottomTabs" parent="." instance=ExtResource("5")]
+[node name="SideTabs" parent="ContentRow" instance=ExtResource("5")]

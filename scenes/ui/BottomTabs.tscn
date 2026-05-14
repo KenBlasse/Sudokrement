@@ -7,7 +7,8 @@
 
 [node name="BottomTabs" type="TabContainer"]
 script = ExtResource("1")
-custom_minimum_size = Vector2(0, 200)
+custom_minimum_size = Vector2(320, 0)
+size_flags_vertical = 3
 
 [node name="Shop" parent="." instance=ExtResource("2")]
 

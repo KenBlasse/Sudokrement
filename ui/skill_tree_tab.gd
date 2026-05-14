@@ -1,11 +1,13 @@
 extends VBoxContainer
 
 @onready var stars_label: Label = $StarsLabel
-@onready var nodes_list: VBoxContainer = $NodesList
+@onready var nodes_list: VBoxContainer = $Scroll/NodesList
 
 var _node_buttons: Dictionary = {}
 
 func _ready() -> void:
+	stars_label.add_theme_color_override("font_color", Color(1, 0.8, 0.1, 1))
+	stars_label.add_theme_font_size_override("font_size", 18)
 	SkillTree.stars_changed.connect(_on_stars_changed)
 	SkillTree.node_unlocked.connect(_on_node_unlocked)
 	_build_nodes()

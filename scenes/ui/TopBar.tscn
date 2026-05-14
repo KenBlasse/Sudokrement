@@ -1,21 +1,39 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://ui/top_bar.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/icons/coin.svg" id="2"]
+[ext_resource type="Texture2D" path="res://assets/icons/star.svg" id="3"]
 
 [node name="TopBar" type="HBoxContainer"]
 script = ExtResource("1")
 custom_minimum_size = Vector2(0, 40)
+theme_override_constants/separation = 8
+
+[node name="CoinIcon" type="TextureRect" parent="."]
+texture = ExtResource("2")
+custom_minimum_size = Vector2(28, 28)
+expand_mode = 1
+stretch_mode = 5
 
 [node name="CoinsLabel" type="Label" parent="."]
-text = "Coins: 0"
+text = "0"
+
+[node name="DiffSpacer" type="Control" parent="."]
+custom_minimum_size = Vector2(16, 0)
 
 [node name="DifficultyButton" type="OptionButton" parent="."]
 
 [node name="Spacer1" type="Control" parent="."]
 size_flags_horizontal = 3
 
+[node name="PrestigeIcon" type="TextureRect" parent="."]
+texture = ExtResource("3")
+custom_minimum_size = Vector2(24, 24)
+expand_mode = 1
+stretch_mode = 5
+
 [node name="PrestigeLabel" type="Label" parent="."]
-text = "Prestige: 0"
+text = "0"
 
 [node name="Spacer2" type="Control" parent="."]
 size_flags_horizontal = 3

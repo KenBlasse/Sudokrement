@@ -7,6 +7,9 @@ var solution: Array       # 2D Array of int (correct values)
 var difficulty: String = "easy"
 var start_time: float = 0.0
 var lives_left: int = 3
+var rows_awarded: Dictionary = {}
+var cols_awarded: Dictionary = {}
+var blocks_awarded: Dictionary = {}
 
 func _init(board_size: int) -> void:
 	size = board_size
