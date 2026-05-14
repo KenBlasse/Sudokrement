@@ -9,6 +9,13 @@ var _elapsed: float = 0.0
 func _ready() -> void:
 	Economy.coins_changed.connect(_on_coins_changed)
 	_on_coins_changed(Economy.coins)
+	var diff_btn: OptionButton = $DifficultyButton
+	diff_btn.add_item("Casual (×1.0)", 0)
+	diff_btn.add_item("Standard (×1.5)", 1)
+	diff_btn.add_item("Hardcore (×2.5)", 2)
+	diff_btn.item_selected.connect(_on_difficulty_changed)
+	var modes := ["casual", "standard", "hardcore"]
+	diff_btn.select(modes.find(Economy.difficulty_mode))
 
 func _process(delta: float) -> void:
 	_elapsed += delta
@@ -21,3 +28,7 @@ func _on_coins_changed(new_total: float) -> void:
 
 func reset_timer() -> void:
 	_elapsed = 0.0
+
+func _on_difficulty_changed(index: int) -> void:
+	var modes := ["casual", "standard", "hardcore"]
+	Economy.difficulty_mode = modes[index]

@@ -9,6 +9,8 @@ custom_minimum_size = Vector2(0, 40)
 [node name="CoinsLabel" type="Label" parent="."]
 text = "Coins: 0"
 
+[node name="DifficultyButton" type="OptionButton" parent="."]
+
 [node name="Spacer1" type="Control" parent="."]
 size_flags_horizontal = 3
 
