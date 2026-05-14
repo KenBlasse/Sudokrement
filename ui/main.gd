@@ -28,10 +28,16 @@ func _load_game() -> void:
 	var data: Dictionary = SaveSystem.load_data()
 	if data.has("economy"):
 		Economy.deserialize(data["economy"])
+	if data.has("skill_tree"):
+		SkillTree.deserialize(data["skill_tree"])
+	if data.has("prestige"):
+		PrestigeManager.deserialize(data["prestige"])
 
 func _save_game() -> void:
 	SaveSystem.save_data({
 		"economy": Economy.serialize(),
+		"skill_tree": SkillTree.serialize(),
+		"prestige": PrestigeManager.serialize(),
 	})
 
 func _on_hint_purchased() -> void:
