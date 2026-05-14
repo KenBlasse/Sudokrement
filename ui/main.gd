@@ -55,8 +55,15 @@ func _on_hint_purchased() -> void:
 	board.cells[pos.x][pos.y].locked = true
 	sudoku_board._rebuild_grid()
 
+func _current_tier() -> String:
+	if SkillTree.is_unlocked("tier_hard"):
+		return "hard"
+	if SkillTree.is_unlocked("tier_medium"):
+		return "medium"
+	return "easy"
+
 func _start_new_board() -> void:
-	var board := generator.generate("easy")
+	var board := generator.generate(_current_tier())
 	sudoku_board.set_board(board)
 	top_bar.reset_timer()
 
