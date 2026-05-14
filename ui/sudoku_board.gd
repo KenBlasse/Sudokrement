@@ -132,5 +132,37 @@ func input_value(value: int) -> void:
 		return
 	board.set_value(selected_row, selected_col, value)
 	var correct: bool = validator.is_correct(board, selected_row, selected_col, value)
-	_update_button(_cell_buttons[selected_row][selected_col], selected_row, selected_col)
+	var btn: Button = _cell_buttons[selected_row][selected_col]
+	_update_button(btn, selected_row, selected_col)
+	if correct and value > 0:
+		_flash_cell(btn, Color(0, 0.94, 1, 1))
+	elif value > 0 and not correct:
+		_flash_cell(btn, Color(1, 0.2, 0.45, 1))
 	cell_filled.emit(selected_row, selected_col, value, correct)
+
+func _flash_cell(btn: Button, color: Color) -> void:
+	btn.pivot_offset = btn.size * 0.5
+	var t := btn.create_tween()
+	t.tween_property(btn, "modulate", color * 1.6, 0.08)
+	t.tween_property(btn, "modulate", Color(1, 1, 1, 1), 0.18)
+	t.parallel().tween_property(btn, "scale", Vector2(1.15, 1.15), 0.08).from(Vector2(1, 1))
+	t.parallel().tween_property(btn, "scale", Vector2(1.0, 1.0), 0.18)
+
+func combo_wave(cells: Array, color: Color) -> void:
+	for i in range(cells.size()):
+		var pos: Vector2i = cells[i]
+		if pos.x < 0 or pos.x >= _cell_buttons.size():
+			continue
+		if pos.y < 0 or pos.y >= _cell_buttons[pos.x].size():
+			continue
+		var btn: Button = _cell_buttons[pos.x][pos.y]
+		if btn == null:
+			continue
+		var delay: float = i * 0.04
+		btn.pivot_offset = btn.size * 0.5
+		var t := btn.create_tween()
+		t.tween_interval(delay)
+		t.tween_property(btn, "modulate", color * 1.8, 0.10)
+		t.tween_property(btn, "modulate", Color(1, 1, 1, 1), 0.22)
+		t.parallel().tween_property(btn, "scale", Vector2(1.25, 1.25), 0.10).from(Vector2(1, 1))
+		t.parallel().tween_property(btn, "scale", Vector2(1.0, 1.0), 0.22)

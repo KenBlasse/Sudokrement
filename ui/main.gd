@@ -84,14 +84,29 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		var b: float = Economy.coins
 		Economy.award_combo("row")
 		PrestigeManager.record_coins(Economy.coins - b)
+		var cells: Array = []
+		for c in range(board.size):
+			cells.append(Vector2i(row, c))
+		sudoku_board.combo_wave(cells, Color(0, 0.94, 1, 1))
 	if validator.is_column_complete(board, col):
 		var b: float = Economy.coins
 		Economy.award_combo("column")
 		PrestigeManager.record_coins(Economy.coins - b)
+		var cells: Array = []
+		for r in range(board.size):
+			cells.append(Vector2i(r, col))
+		sudoku_board.combo_wave(cells, Color(0, 0.94, 1, 1))
 	if validator.is_block_complete(board, row, col):
 		var b: float = Economy.coins
 		Economy.award_combo("block")
 		PrestigeManager.record_coins(Economy.coins - b)
+		var cells: Array = []
+		var br: int = (row / 3) * 3
+		var bc: int = (col / 3) * 3
+		for r in range(br, br + 3):
+			for c in range(bc, bc + 3):
+				cells.append(Vector2i(r, c))
+		sudoku_board.combo_wave(cells, Color(1, 0, 0.67, 1))
 	if validator.is_board_complete(board):
 		var before2: float = Economy.coins
 		Economy.award_board_complete(0.0)

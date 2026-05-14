@@ -37,6 +37,13 @@ func _process(delta: float) -> void:
 
 func _on_coins_changed(new_total: float) -> void:
 	coins_label.text = "%d" % int(new_total)
+	_pop(coins_label)
+
+func _pop(label: Label) -> void:
+	var t := label.create_tween()
+	t.tween_property(label, "scale", Vector2(1.25, 1.25), 0.08).from(Vector2(1, 1))
+	t.tween_property(label, "scale", Vector2(1.0, 1.0), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	label.pivot_offset = label.size * 0.5
 
 func _on_stars_changed(new_total: int) -> void:
 	prestige_label.text = "%d" % new_total
