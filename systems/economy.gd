@@ -41,3 +41,16 @@ func award_combo(combo_type: String) -> void:
 func award_board_complete(speed_bonus: float) -> void:
 	coins += (BOARD_COMPLETE_BONUS + speed_bonus) * _effective_multiplier()
 	coins_changed.emit(coins)
+
+func serialize() -> Dictionary:
+	return {
+		"coins": coins,
+		"permanent_multiplier": permanent_multiplier,
+		"difficulty_mode": difficulty_mode,
+	}
+
+func deserialize(data: Dictionary) -> void:
+	coins = data.get("coins", 0.0)
+	permanent_multiplier = data.get("permanent_multiplier", 1.0)
+	difficulty_mode = data.get("difficulty_mode", "casual")
+	coins_changed.emit(coins)

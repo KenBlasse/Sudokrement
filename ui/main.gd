@@ -13,7 +13,23 @@ func _ready() -> void:
 	number_pad.number_pressed.connect(_on_number_pressed)
 	number_pad.erase_pressed.connect(_on_erase_pressed)
 	sudoku_board.cell_filled.connect(_on_cell_filled)
+	_load_game()
 	_start_new_board()
+	var autosave := Timer.new()
+	autosave.wait_time = 30.0
+	autosave.autostart = true
+	autosave.timeout.connect(_save_game)
+	add_child(autosave)
+
+func _load_game() -> void:
+	var data: Dictionary = SaveSystem.load_data()
+	if data.has("economy"):
+		Economy.deserialize(data["economy"])
+
+func _save_game() -> void:
+	SaveSystem.save_data({
+		"economy": Economy.serialize(),
+	})
 
 func _start_new_board() -> void:
 	var board := generator.generate("easy")
@@ -39,4 +55,5 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		Economy.award_combo("block")
 	if validator.is_board_complete(board):
 		Economy.award_board_complete(0.0)
+		_save_game()
 		_start_new_board()
