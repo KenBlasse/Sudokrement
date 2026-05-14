@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://ui/sudoku_board.gd" id="1"]
 
 [node name="SudokuBoard" type="GridContainer"]
-columns = 9
+columns = 3
 script = ExtResource("1")
-custom_minimum_size = Vector2(450, 450)
+custom_minimum_size = Vector2(456, 456)
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 3
