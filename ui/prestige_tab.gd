@@ -22,7 +22,8 @@ func _refresh(_ignored: float = 0.0) -> void:
 	prestige_button.disabled = not PrestigeManager.can_prestige()
 
 func _on_prestige_pressed() -> void:
-	PrestigeManager.prestige()
+	if PrestigeManager.prestige() > 0:
+		SoundManager.prestige()
 	_refresh()
 
 func _on_prestiged(_stars: int) -> void:

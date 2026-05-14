@@ -136,8 +136,12 @@ func input_value(value: int) -> void:
 	_update_button(btn, selected_row, selected_col)
 	if correct and value > 0:
 		_flash_cell(btn, Color(0, 0.94, 1, 1))
+		SoundManager.correct()
 	elif value > 0 and not correct:
 		_flash_cell(btn, Color(1, 0.2, 0.45, 1))
+		SoundManager.wrong()
+	elif value == 0:
+		SoundManager.click()
 	cell_filled.emit(selected_row, selected_col, value, correct)
 
 func _flash_cell(btn: Button, color: Color) -> void:

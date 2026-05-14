@@ -74,13 +74,19 @@ func _on_erase_pressed() -> void:
 	sudoku_board.input_value(0)
 
 func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
-	if not is_correct:
+	if not is_correct or value == 0:
 		return
+	var board: Board = sudoku_board.board
+	var cell: Cell = board.cells[row][col]
+	if cell.awarded:
+		return
+	cell.awarded = true
 	var before: float = Economy.coins
 	Economy.award_cell()
 	PrestigeManager.record_coins(Economy.coins - before)
-	var board: Board = sudoku_board.board
-	if validator.is_row_complete(board, row):
+	var combo_triggered: bool = false
+	if validator.is_row_complete(board, row) and not board.rows_awarded.get(row, false):
+		board.rows_awarded[row] = true
 		var b: float = Economy.coins
 		Economy.award_combo("row")
 		PrestigeManager.record_coins(Economy.coins - b)
@@ -88,7 +94,9 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		for c in range(board.size):
 			cells.append(Vector2i(row, c))
 		sudoku_board.combo_wave(cells, Color(0, 0.94, 1, 1))
-	if validator.is_column_complete(board, col):
+		combo_triggered = true
+	if validator.is_column_complete(board, col) and not board.cols_awarded.get(col, false):
+		board.cols_awarded[col] = true
 		var b: float = Economy.coins
 		Economy.award_combo("column")
 		PrestigeManager.record_coins(Economy.coins - b)
@@ -96,7 +104,10 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		for r in range(board.size):
 			cells.append(Vector2i(r, col))
 		sudoku_board.combo_wave(cells, Color(0, 0.94, 1, 1))
-	if validator.is_block_complete(board, row, col):
+		combo_triggered = true
+	var block_key: int = (row / 3) * 3 + (col / 3)
+	if validator.is_block_complete(board, row, col) and not board.blocks_awarded.get(block_key, false):
+		board.blocks_awarded[block_key] = true
 		var b: float = Economy.coins
 		Economy.award_combo("block")
 		PrestigeManager.record_coins(Economy.coins - b)
@@ -107,11 +118,15 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 			for c in range(bc, bc + 3):
 				cells.append(Vector2i(r, c))
 		sudoku_board.combo_wave(cells, Color(1, 0, 0.67, 1))
+		combo_triggered = true
+	if combo_triggered:
+		SoundManager.combo()
 	if validator.is_board_complete(board):
 		var before2: float = Economy.coins
 		Economy.award_board_complete(0.0)
 		PrestigeManager.record_coins(Economy.coins - before2)
 		PrestigeManager.record_board_solved()
+		SoundManager.board_complete()
 		var prestige_tab := side_tabs.get_node_or_null("Prestige")
 		if prestige_tab:
 			prestige_tab._refresh()

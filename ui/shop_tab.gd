@@ -35,4 +35,5 @@ func _on_hint_pressed() -> void:
 	Economy.coins -= cost
 	Economy.coins_changed.emit(Economy.coins)
 	_hint_purchases += 1
+	SoundManager.purchase()
 	hint_purchased.emit()
