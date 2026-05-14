@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/prestige_tab.gd" id="1"]
+
+[node name="Prestige" type="VBoxContainer"]
+script = ExtResource("1")
+
+[node name="StatusLabel" type="Label" parent="."]
+text = "Progress: 0/25 boards"
+
+[node name="StarsLabel" type="Label" parent="."]
+text = "Stars on prestige: 0"
+
+[node name="PrestigeButton" type="Button" parent="."]
+text = "Prestige"
+disabled = true

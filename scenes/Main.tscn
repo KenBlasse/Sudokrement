@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui/main.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/TopBar.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SudokuBoard.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/NumberPad.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/BottomTabs.tscn" id="5"]
+
+[node name="Main" type="VBoxContainer"]
+script = ExtResource("1")
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" parent="." instance=ExtResource("2")]
+
+[node name="BoardContainer" type="CenterContainer" parent="."]
+size_flags_vertical = 3
+
+[node name="SudokuBoard" parent="BoardContainer" instance=ExtResource("3")]
+
+[node name="NumberPadContainer" type="CenterContainer" parent="."]
+
+[node name="NumberPad" parent="NumberPadContainer" instance=ExtResource("4")]
+
+[node name="BottomTabs" parent="." instance=ExtResource("5")]

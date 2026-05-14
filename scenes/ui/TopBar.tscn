@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/top_bar.gd" id="1"]
+
+[node name="TopBar" type="HBoxContainer"]
+script = ExtResource("1")
+custom_minimum_size = Vector2(0, 40)
+
+[node name="CoinsLabel" type="Label" parent="."]
+text = "Coins: 0"
+
+[node name="DifficultyButton" type="OptionButton" parent="."]
+
+[node name="Spacer1" type="Control" parent="."]
+size_flags_horizontal = 3
+
+[node name="PrestigeLabel" type="Label" parent="."]
+text = "Prestige: 0"
+
+[node name="Spacer2" type="Control" parent="."]
+size_flags_horizontal = 3
+
+[node name="TimerLabel" type="Label" parent="."]
+text = "00:00"
