@@ -19,3 +19,6 @@ renderer/rendering_method.mobile="gl_compatibility"
 
 [editor_plugins]
 enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
+
+[autoload]
+Economy="*res://systems/economy.gd"
