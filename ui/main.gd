@@ -13,6 +13,9 @@ func _ready() -> void:
 	number_pad.number_pressed.connect(_on_number_pressed)
 	number_pad.erase_pressed.connect(_on_erase_pressed)
 	sudoku_board.cell_filled.connect(_on_cell_filled)
+	var bottom_tabs: TabContainer = $BottomTabs
+	var shop: VBoxContainer = bottom_tabs.get_node("Shop")
+	shop.hint_purchased.connect(_on_hint_purchased)
 	_load_game()
 	_start_new_board()
 	var autosave := Timer.new()
@@ -30,6 +33,21 @@ func _save_game() -> void:
 	SaveSystem.save_data({
 		"economy": Economy.serialize(),
 	})
+
+func _on_hint_purchased() -> void:
+	var board: Board = sudoku_board.board
+	var empty_cells: Array = []
+	for r in range(board.size):
+		for c in range(board.size):
+			if board.cells[r][c].value == 0:
+				empty_cells.append(Vector2i(r, c))
+	if empty_cells.is_empty():
+		return
+	empty_cells.shuffle()
+	var pos: Vector2i = empty_cells[0]
+	board.cells[pos.x][pos.y].value = board.solution[pos.x][pos.y]
+	board.cells[pos.x][pos.y].locked = true
+	sudoku_board._rebuild_grid()
 
 func _start_new_board() -> void:
 	var board := generator.generate("easy")
