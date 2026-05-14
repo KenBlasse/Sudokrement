@@ -5,6 +5,10 @@ extends VBoxContainer
 @onready var prestige_button: Button = $PrestigeButton
 
 func _ready() -> void:
+	status_label.add_theme_color_override("font_color", Color(0, 0.94, 1, 1))
+	status_label.add_theme_font_size_override("font_size", 18)
+	stars_label.add_theme_color_override("font_color", Color(1, 0.8, 0.1, 1))
+	stars_label.add_theme_font_size_override("font_size", 18)
 	prestige_button.pressed.connect(_on_prestige_pressed)
 	Economy.coins_changed.connect(_refresh)
 	PrestigeManager.prestiged.connect(_on_prestiged)

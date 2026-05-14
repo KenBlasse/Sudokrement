@@ -1,5 +1,9 @@
 extends HBoxContainer
 
+const COIN_COLOR: Color = Color(1, 0.8, 0.1, 1)
+const PRESTIGE_COLOR: Color = Color(1, 0, 0.67, 1)
+const TIMER_COLOR: Color = Color(0, 0.94, 1, 1)
+
 @onready var coins_label: Label = $CoinsLabel
 @onready var prestige_label: Label = $PrestigeLabel
 @onready var timer_label: Label = $TimerLabel
@@ -7,6 +11,12 @@ extends HBoxContainer
 var _elapsed: float = 0.0
 
 func _ready() -> void:
+	coins_label.add_theme_color_override("font_color", COIN_COLOR)
+	coins_label.add_theme_font_size_override("font_size", 20)
+	prestige_label.add_theme_color_override("font_color", PRESTIGE_COLOR)
+	prestige_label.add_theme_font_size_override("font_size", 18)
+	timer_label.add_theme_color_override("font_color", TIMER_COLOR)
+	timer_label.add_theme_font_size_override("font_size", 18)
 	Economy.coins_changed.connect(_on_coins_changed)
 	_on_coins_changed(Economy.coins)
 	var diff_btn: OptionButton = $DifficultyButton

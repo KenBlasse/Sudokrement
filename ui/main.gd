@@ -1,8 +1,9 @@
 extends VBoxContainer
 
-@onready var sudoku_board: GridContainer = $BoardContainer/SudokuBoard
-@onready var number_pad: HBoxContainer = $NumberPadContainer/NumberPad
+@onready var sudoku_board: GridContainer = $ContentRow/LeftCol/BoardContainer/SudokuBoard
+@onready var number_pad: HBoxContainer = $ContentRow/LeftCol/NumberPadContainer/NumberPad
 @onready var top_bar: HBoxContainer = $TopBar
+@onready var side_tabs: TabContainer = $ContentRow/SideTabs
 
 var validator: Validator
 var generator: BoardGenerator
@@ -13,8 +14,7 @@ func _ready() -> void:
 	number_pad.number_pressed.connect(_on_number_pressed)
 	number_pad.erase_pressed.connect(_on_erase_pressed)
 	sudoku_board.cell_filled.connect(_on_cell_filled)
-	var bottom_tabs: TabContainer = $BottomTabs
-	var shop: VBoxContainer = bottom_tabs.get_node("Shop")
+	var shop: VBoxContainer = side_tabs.get_node("Shop")
 	shop.hint_purchased.connect(_on_hint_purchased)
 	_load_game()
 	_start_new_board()
@@ -97,7 +97,7 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		Economy.award_board_complete(0.0)
 		PrestigeManager.record_coins(Economy.coins - before2)
 		PrestigeManager.record_board_solved()
-		var prestige_tab := $BottomTabs.get_node_or_null("Prestige")
+		var prestige_tab := side_tabs.get_node_or_null("Prestige")
 		if prestige_tab:
 			prestige_tab._refresh()
 		_save_game()
