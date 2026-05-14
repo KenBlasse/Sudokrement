@@ -1,5 +1,7 @@
 extends HBoxContainer
 
+signal menu_requested()
+
 const COIN_COLOR: Color = Color(1, 0.8, 0.1, 1)
 const PRESTIGE_COLOR: Color = Color(1, 0, 0.67, 1)
 const TIMER_COLOR: Color = Color(0, 0.94, 1, 1)
@@ -7,6 +9,7 @@ const TIMER_COLOR: Color = Color(0, 0.94, 1, 1)
 @onready var coins_label: Label = $CoinsLabel
 @onready var prestige_label: Label = $PrestigeLabel
 @onready var timer_label: Label = $TimerLabel
+@onready var menu_button: Button = $MenuButton
 
 var _elapsed: float = 0.0
 
@@ -21,6 +24,7 @@ func _ready() -> void:
 	_on_coins_changed(Economy.coins)
 	SkillTree.stars_changed.connect(_on_stars_changed)
 	_on_stars_changed(SkillTree.stars)
+	menu_button.pressed.connect(func(): menu_requested.emit())
 	var diff_btn: OptionButton = $DifficultyButton
 	diff_btn.add_item("Casual (×1.0)", 0)
 	diff_btn.add_item("Standard (×1.5)", 1)

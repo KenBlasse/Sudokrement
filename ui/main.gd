@@ -14,6 +14,7 @@ func _ready() -> void:
 	number_pad.number_pressed.connect(_on_number_pressed)
 	number_pad.erase_pressed.connect(_on_erase_pressed)
 	sudoku_board.cell_filled.connect(_on_cell_filled)
+	top_bar.menu_requested.connect(_on_menu_requested)
 	var shop: VBoxContainer = side_tabs.get_node("Shop")
 	shop.hint_purchased.connect(_on_hint_purchased)
 	_load_game()
@@ -39,6 +40,10 @@ func _save_game() -> void:
 		"skill_tree": SkillTree.serialize(),
 		"prestige": PrestigeManager.serialize(),
 	})
+
+func _on_menu_requested() -> void:
+	_save_game()
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _on_hint_purchased() -> void:
 	var board: Board = sudoku_board.board
@@ -66,6 +71,9 @@ func _start_new_board() -> void:
 	var board := generator.generate(_current_tier())
 	sudoku_board.set_board(board)
 	top_bar.reset_timer()
+	var shop := side_tabs.get_node_or_null("Shop")
+	if shop and shop.has_method("reset_board_session"):
+		shop.reset_board_session()
 
 func _on_number_pressed(value: int) -> void:
 	sudoku_board.input_value(value)

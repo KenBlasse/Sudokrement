@@ -40,3 +40,9 @@ size_flags_horizontal = 3
 
 [node name="TimerLabel" type="Label" parent="."]
 text = "00:00"
+
+[node name="MenuSpacer" type="Control" parent="."]
+custom_minimum_size = Vector2(16, 0)
+
+[node name="MenuButton" type="Button" parent="."]
+text = "Menu"
