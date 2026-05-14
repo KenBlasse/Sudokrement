@@ -84,5 +84,8 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		Economy.award_board_complete(0.0)
 		PrestigeManager.record_coins(Economy.coins - before2)
 		PrestigeManager.record_board_solved()
+		var prestige_tab := $BottomTabs.get_node_or_null("Prestige")
+		if prestige_tab:
+			prestige_tab._refresh()
 		_save_game()
 		_start_new_board()
