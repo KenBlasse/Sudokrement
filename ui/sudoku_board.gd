@@ -75,6 +75,8 @@ func _update_button(btn: Button, r: int, c: int) -> void:
 		btn.text = ""
 	if cell.given:
 		btn.modulate = Color(0.7, 0.7, 1.0)
+	elif cell.value > 0 and cell.value != board.solution[r][c]:
+		btn.modulate = Color(1.0, 0.5, 0.5)
 	else:
 		btn.modulate = Color(1.0, 1.0, 1.0)
 
