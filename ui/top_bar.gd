@@ -19,6 +19,8 @@ func _ready() -> void:
 	timer_label.add_theme_font_size_override("font_size", 18)
 	Economy.coins_changed.connect(_on_coins_changed)
 	_on_coins_changed(Economy.coins)
+	SkillTree.stars_changed.connect(_on_stars_changed)
+	_on_stars_changed(SkillTree.stars)
 	var diff_btn: OptionButton = $DifficultyButton
 	diff_btn.add_item("Casual (×1.0)", 0)
 	diff_btn.add_item("Standard (×1.5)", 1)
@@ -34,7 +36,10 @@ func _process(delta: float) -> void:
 	timer_label.text = "%02d:%02d" % [m, s]
 
 func _on_coins_changed(new_total: float) -> void:
-	coins_label.text = "Coins: %d" % int(new_total)
+	coins_label.text = "%d" % int(new_total)
+
+func _on_stars_changed(new_total: int) -> void:
+	prestige_label.text = "%d" % new_total
 
 func reset_timer() -> void:
 	_elapsed = 0.0

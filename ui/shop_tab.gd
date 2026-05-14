@@ -10,6 +10,8 @@ var hint_button: Button
 
 func _ready() -> void:
 	hint_button = Button.new()
+	hint_button.icon = load("res://assets/icons/hint.svg")
+	hint_button.expand_icon = false
 	hint_button.text = _hint_label()
 	hint_button.pressed.connect(_on_hint_pressed)
 	add_child(hint_button)
