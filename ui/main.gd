@@ -63,15 +63,26 @@ func _on_erase_pressed() -> void:
 func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 	if not is_correct:
 		return
+	var before: float = Economy.coins
 	Economy.award_cell()
+	PrestigeManager.record_coins(Economy.coins - before)
 	var board: Board = sudoku_board.board
 	if validator.is_row_complete(board, row):
+		var b: float = Economy.coins
 		Economy.award_combo("row")
+		PrestigeManager.record_coins(Economy.coins - b)
 	if validator.is_column_complete(board, col):
+		var b: float = Economy.coins
 		Economy.award_combo("column")
+		PrestigeManager.record_coins(Economy.coins - b)
 	if validator.is_block_complete(board, row, col):
+		var b: float = Economy.coins
 		Economy.award_combo("block")
+		PrestigeManager.record_coins(Economy.coins - b)
 	if validator.is_board_complete(board):
+		var before2: float = Economy.coins
 		Economy.award_board_complete(0.0)
+		PrestigeManager.record_coins(Economy.coins - before2)
+		PrestigeManager.record_board_solved()
 		_save_game()
 		_start_new_board()
