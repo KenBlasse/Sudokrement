@@ -86,3 +86,22 @@ func test_lifetime_coins_observed_tracks() -> void:
 func test_unknown_check_does_not_crash() -> void:
 	AchievementManager._check_passes("nonsense_check", {})
 	assert_bool(true).is_true()
+
+func test_serialize_deserialize_roundtrip() -> void:
+	AchievementManager.counters["boards_solved"] = 7
+	AchievementManager.counters["combos_total"] = 42
+	AchievementManager.unlocked["solve_10_boards"] = true
+	var data: Dictionary = AchievementManager.serialize()
+	AchievementManager.reset()
+	assert_int(int(AchievementManager.counters["boards_solved"])).is_equal(0)
+	AchievementManager.deserialize(data)
+	assert_int(int(AchievementManager.counters["boards_solved"])).is_equal(7)
+	assert_int(int(AchievementManager.counters["combos_total"])).is_equal(42)
+	assert_bool(AchievementManager.unlocked.get("solve_10_boards", false)).is_true()
+
+func test_deserialize_empty_dict_uses_defaults() -> void:
+	AchievementManager.deserialize({})
+	assert_int(int(AchievementManager.counters["boards_solved"])).is_equal(0)
+	assert_int(int(AchievementManager.counters["combos_total"])).is_equal(0)
+	assert_int(int(AchievementManager.counters["lifetime_coins_observed"])).is_equal(0)
+	assert_int(AchievementManager.unlocked.size()).is_equal(0)
