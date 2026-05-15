@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+GameEvents="*res://systems/game_events.gd"
 Economy="*res://systems/economy.gd"
 SaveSystem="*res://systems/save_system.gd"
 SkillTree="*res://systems/skill_tree.gd"
