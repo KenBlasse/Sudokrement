@@ -78,6 +78,7 @@ func _start_new_board() -> void:
 	sudoku_board.hide_wrong = Economy.difficulty_mode == "hardcore"
 	sudoku_board.set_board(board)
 	top_bar.reset_timer()
+	board.start_time = Time.get_ticks_msec() / 1000.0
 	_lives = STANDARD_LIVES
 	_refresh_lives_label()
 	var shop := side_tabs.get_node_or_null("Shop")
@@ -102,6 +103,7 @@ func _on_erase_pressed() -> void:
 func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 	var board: Board = sudoku_board.board
 	if value > 0 and not is_correct and Economy.difficulty_mode == "standard":
+		board.mistakes_this_run += 1
 		_lives -= 1
 		_refresh_lives_label()
 		if _lives <= 0:
@@ -112,6 +114,7 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 			_award_board_complete(board)
 		else:
 			SoundManager.wrong()
+			board.mistakes_this_run += 1
 			_start_new_board()
 		return
 	if not is_correct or value == 0:
@@ -129,6 +132,8 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		var b: float = Economy.coins
 		Economy.award_combo("row")
 		PrestigeManager.record_coins(Economy.coins - b)
+		board.combos_this_run += 1
+		GameEvents.combo_triggered.emit("row")
 		var cells: Array = []
 		for c in range(board.size):
 			cells.append(Vector2i(row, c))
@@ -139,6 +144,8 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		var b: float = Economy.coins
 		Economy.award_combo("column")
 		PrestigeManager.record_coins(Economy.coins - b)
+		board.combos_this_run += 1
+		GameEvents.combo_triggered.emit("column")
 		var cells: Array = []
 		for r in range(board.size):
 			cells.append(Vector2i(r, col))
@@ -150,6 +157,8 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		var b: float = Economy.coins
 		Economy.award_combo("block")
 		PrestigeManager.record_coins(Economy.coins - b)
+		board.combos_this_run += 1
+		GameEvents.combo_triggered.emit("block")
 		var cells: Array = []
 		var br: int = (row / 3) * 3
 		var bc: int = (col / 3) * 3
@@ -163,12 +172,19 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 	if validator.is_board_complete(board):
 		_award_board_complete(board)
 
-func _award_board_complete(_board: Board) -> void:
+func _award_board_complete(board: Board) -> void:
 	var before2: float = Economy.coins
 	Economy.award_board_complete(0.0)
 	PrestigeManager.record_coins(Economy.coins - before2)
 	PrestigeManager.record_board_solved()
 	SoundManager.board_complete()
+	var elapsed: float = (Time.get_ticks_msec() / 1000.0) - board.start_time
+	GameEvents.board_solved.emit({
+		"difficulty": Economy.difficulty_mode,
+		"time_seconds": elapsed,
+		"mistakes": board.mistakes_this_run,
+		"combos_in_board": board.combos_this_run,
+	})
 	var prestige_tab := side_tabs.get_node_or_null("Prestige")
 	if prestige_tab:
 		prestige_tab._refresh()
