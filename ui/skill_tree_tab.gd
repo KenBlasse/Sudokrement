@@ -1,5 +1,7 @@
 extends VBoxContainer
 
+const STAR_ICON: Texture2D = preload("res://assets/icons/star.svg")
+
 @onready var stars_label: Label = $StarsLabel
 @onready var nodes_list: VBoxContainer = $Scroll/NodesList
 
@@ -16,6 +18,8 @@ func _ready() -> void:
 func _build_nodes() -> void:
 	for node_id in SkillTree.NODES.keys():
 		var btn := Button.new()
+		btn.expand_icon = true
+		btn.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		nodes_list.add_child(btn)
 		btn.pressed.connect(_on_node_pressed.bind(node_id))
 		_node_buttons[node_id] = btn
@@ -27,9 +31,11 @@ func _refresh() -> void:
 		var node: Dictionary = SkillTree.NODES[node_id]
 		if SkillTree.is_unlocked(node_id):
 			btn.text = "%s — UNLOCKED" % node_id
+			btn.icon = null
 			btn.disabled = true
 		else:
-			btn.text = "%s (%d ★)" % [node_id, node["cost"]]
+			btn.text = "%s (%d)" % [node_id, node["cost"]]
+			btn.icon = STAR_ICON
 			btn.disabled = not SkillTree.can_unlock(node_id)
 
 func _on_node_pressed(node_id: String) -> void:

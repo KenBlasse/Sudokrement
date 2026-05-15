@@ -13,6 +13,7 @@ const LIVES_COLOR: Color = Color(1, 0.4, 0.55, 1)
 @onready var timer_label: Label = $TimerLabel
 @onready var menu_button: Button = $MenuButton
 @onready var lives_label: Label = $LivesLabel
+@onready var lives_icon: TextureRect = $LivesIcon
 
 var _elapsed: float = 0.0
 
@@ -73,5 +74,7 @@ func _on_difficulty_changed(index: int) -> void:
 func set_lives(lives: int) -> void:
 	if lives < 0:
 		lives_label.text = ""
+		lives_icon.visible = false
 	else:
-		lives_label.text = "♥ %d" % lives
+		lives_label.text = "%d" % lives
+		lives_icon.visible = true
