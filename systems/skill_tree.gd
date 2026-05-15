@@ -4,13 +4,13 @@ signal node_unlocked(node_id: String)
 signal stars_changed(new_total: int)
 
 const NODES: Dictionary = {
-	"naked_single":  {"cost": 1, "requires": [], "branch": "solvers"},
-	"hidden_single": {"cost": 2, "requires": ["naked_single"], "branch": "solvers"},
-	"pointing_pair": {"cost": 3, "requires": ["hidden_single"], "branch": "solvers"},
-	"coin_plus_10":  {"cost": 2, "requires": [], "branch": "economy"},
-	"combo_1_5x":    {"cost": 3, "requires": ["coin_plus_10"], "branch": "economy"},
-	"tier_medium":   {"cost": 5, "requires": [], "branch": "progression"},
-	"tier_hard":     {"cost": 10, "requires": ["tier_medium"], "branch": "progression"},
+	"naked_single":  {"cost": 1,  "requires": [],                "branch": "solvers",     "status": "coming_soon", "label": "Naked Single",  "desc": "Markiert Zellen, in die nur eine Ziffer passt."},
+	"hidden_single": {"cost": 2,  "requires": ["naked_single"],  "branch": "solvers",     "status": "coming_soon", "label": "Hidden Single", "desc": "Markiert Ziffern, die nur in eine Zelle ihrer Gruppe passen."},
+	"pointing_pair": {"cost": 3,  "requires": ["hidden_single"], "branch": "solvers",     "status": "coming_soon", "label": "Pointing Pair", "desc": "Markiert Pointing-Pair-Konstellationen."},
+	"coin_plus_10":  {"cost": 2,  "requires": [],                "branch": "economy",     "status": "coming_soon", "label": "Goldgriff",     "desc": "+10 % Coins pro Aktion."},
+	"combo_1_5x":    {"cost": 3,  "requires": ["coin_plus_10"],  "branch": "economy",     "status": "coming_soon", "label": "Kettenmeister", "desc": "Combos geben ×1.5 statt ×1 Coins."},
+	"tier_medium":   {"cost": 5,  "requires": [],                "branch": "progression", "status": "live",        "label": "Mittelstufe",   "desc": "Schaltet Schwierigkeitsstufe Medium frei."},
+	"tier_hard":     {"cost": 10, "requires": ["tier_medium"],   "branch": "progression", "status": "live",        "label": "Profistufe",    "desc": "Schaltet Schwierigkeitsstufe Hard frei."},
 }
 
 var stars: int = 0
