@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://ui/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TopBar.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SudokuBoard.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/NumberPad.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/BottomTabs.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/AchievementToast.tscn" id="6"]
 
 [node name="Main" type="VBoxContainer"]
 script = ExtResource("1")
@@ -37,3 +38,5 @@ size_flags_vertical = 3
 [node name="NumberPad" parent="ContentRow/LeftCol/NumberPadContainer" instance=ExtResource("4")]
 
 [node name="SideTabs" parent="ContentRow" instance=ExtResource("5")]
+
+[node name="AchievementToast" parent="." instance=ExtResource("6")]

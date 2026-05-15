@@ -17,11 +17,13 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+GameEvents="*res://systems/game_events.gd"
 Economy="*res://systems/economy.gd"
 SaveSystem="*res://systems/save_system.gd"
 SkillTree="*res://systems/skill_tree.gd"
 PrestigeManager="*res://systems/prestige_manager.gd"
 SoundManager="*res://systems/sound_manager.gd"
+AchievementManager="*res://systems/achievement_manager.gd"
 
 [display]
 

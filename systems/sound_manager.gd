@@ -75,3 +75,6 @@ func purchase() -> void:
 
 func prestige() -> void:
 	_play_tones([262, 392, 523, 784, 1047, 1568], 0.10, 0.40, "sine")
+
+func achievement() -> void:
+	_play_tones([784, 1047, 1568, 2093], 0.07, 0.35, "sine")

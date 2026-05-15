@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://ui/bottom_tabs.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/tabs/ShopTab.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/tabs/PrestigeTab.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/tabs/SkillTreeTab.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/tabs/AchievementsTab.tscn" id="5"]
 
 [node name="BottomTabs" type="TabContainer"]
 script = ExtResource("1")
@@ -15,3 +16,5 @@ size_flags_vertical = 3
 [node name="SkillTree" parent="." instance=ExtResource("4")]
 
 [node name="Prestige" parent="." instance=ExtResource("3")]
+
+[node name="Achievements" parent="." instance=ExtResource("5")]

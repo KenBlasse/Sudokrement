@@ -1,6 +1,7 @@
 extends Node
 
 signal prestiged(stars_gained: int)
+signal lifetime_coins_changed(new_total: float)
 
 const BOARDS_PER_PRESTIGE: int = 25
 
@@ -15,6 +16,7 @@ func reset() -> void:
 
 func record_coins(amount: float) -> void:
 	lifetime_coins += amount
+	lifetime_coins_changed.emit(lifetime_coins)
 
 func record_board_solved() -> void:
 	boards_solved_current_tier += 1
@@ -35,6 +37,7 @@ func prestige() -> int:
 	prestige_count += 1
 	boards_solved_current_tier = 0
 	prestiged.emit(gained)
+	GameEvents.prestiged.emit(gained)
 	return gained
 
 func serialize() -> Dictionary:

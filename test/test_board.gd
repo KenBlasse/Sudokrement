@@ -19,3 +19,8 @@ func test_given_cells_are_immutable():
 	board.cells[0][0].value = 3
 	board.set_value(0, 0, 7)
 	assert_int(board.cells[0][0].value).is_equal(3)
+
+func test_board_tracks_mistakes_and_combos_default_zero() -> void:
+	var board: Board = Board.new(9)
+	assert_int(board.mistakes_this_run).is_equal(0)
+	assert_int(board.combos_this_run).is_equal(0)
