@@ -40,3 +40,12 @@ func test_prestige_increases_permanent_multiplier():
 	var before: float = Economy.permanent_multiplier
 	pm.prestige()
 	assert_float(Economy.permanent_multiplier).is_equal_approx(before + 0.02, 0.001)
+
+func test_record_coins_emits_lifetime_changed() -> void:
+	var received: Array = []
+	pm.lifetime_coins_changed.connect(func(n: float) -> void: received.append(n))
+	pm.record_coins(42.0)
+	pm.record_coins(8.0)
+	assert_int(received.size()).is_equal(2)
+	assert_float(received[0]).is_equal_approx(42.0, 0.001)
+	assert_float(received[1]).is_equal_approx(50.0, 0.001)
