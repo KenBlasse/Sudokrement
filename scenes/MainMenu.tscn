@@ -38,6 +38,17 @@ horizontal_alignment = 1
 [node name="ButtonSpacer" type="Control" parent="Split/LeftCol"]
 custom_minimum_size = Vector2(0, 24)
 
+[node name="SlotLabel" type="Label" parent="Split/LeftCol"]
+text = "Profile"
+horizontal_alignment = 1
+
+[node name="SlotRow" type="HBoxContainer" parent="Split/LeftCol"]
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="SlotGap" type="Control" parent="Split/LeftCol"]
+custom_minimum_size = Vector2(0, 12)
+
 [node name="ContinueButton" type="Button" parent="Split/LeftCol"]
 text = "Continue"
 

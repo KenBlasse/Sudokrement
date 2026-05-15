@@ -2,6 +2,8 @@ extends Control
 
 const TITLE_COLOR: Color = Color(1, 0, 0.67, 1)
 const SUBTITLE_COLOR: Color = Color(0, 0.94, 1, 1)
+const SLOT_ACTIVE_COLOR: Color = Color(1, 0, 0.67, 1)
+const SLOT_INACTIVE_COLOR: Color = Color(0.4, 0.4, 0.5, 1)
 const CELL_REVEAL_INTERVAL: float = 0.18
 const BOARD_RESTART_DELAY: float = 1.5
 
@@ -10,7 +12,12 @@ const BOARD_RESTART_DELAY: float = 1.5
 @onready var quit_button: Button = $Split/LeftCol/QuitButton
 @onready var title_label: Label = $Split/LeftCol/TitleLabel
 @onready var subtitle_label: Label = $Split/LeftCol/SubtitleLabel
+@onready var slot_label: Label = $Split/LeftCol/SlotLabel
+@onready var slot_row: HBoxContainer = $Split/LeftCol/SlotRow
 @onready var demo_host: Control = $Split/RightCol/DemoBoardHost
+
+var _slot_buttons: Array = []
+var _slot_delete_buttons: Array = []
 
 var _generator: BoardGenerator
 var _demo_board: Board
@@ -23,9 +30,12 @@ var _demo_timer: Timer
 func _ready() -> void:
 	_style_title()
 	_style_buttons()
+	_build_slot_buttons()
 	_wire_buttons()
-	_setup_save_state()
+	_refresh_slot_state()
 	_setup_demo_board()
+	if OS.get_name() == "Web":
+		quit_button.visible = false
 
 func _style_title() -> void:
 	title_label.add_theme_font_size_override("font_size", 64)
@@ -46,11 +56,48 @@ func _wire_buttons() -> void:
 	new_game_button.pressed.connect(_on_new_game)
 	quit_button.pressed.connect(_on_quit)
 
-func _setup_save_state() -> void:
+func _build_slot_buttons() -> void:
+	slot_label.add_theme_font_size_override("font_size", 16)
+	slot_label.add_theme_color_override("font_color", SUBTITLE_COLOR)
+	for i in range(SaveSystem.SLOT_COUNT):
+		var slot_box := VBoxContainer.new()
+		slot_box.alignment = BoxContainer.ALIGNMENT_CENTER
+		slot_row.add_child(slot_box)
+
+		var btn := Button.new()
+		btn.custom_minimum_size = Vector2(110, 56)
+		btn.add_theme_font_size_override("font_size", 14)
+		btn.pressed.connect(_on_slot_pressed.bind(i))
+		slot_box.add_child(btn)
+		_slot_buttons.append(btn)
+
+		var del_btn := Button.new()
+		del_btn.text = "Delete"
+		del_btn.custom_minimum_size = Vector2(110, 20)
+		del_btn.add_theme_font_size_override("font_size", 11)
+		del_btn.pressed.connect(_on_slot_delete_pressed.bind(i))
+		slot_box.add_child(del_btn)
+		_slot_delete_buttons.append(del_btn)
+
+func _refresh_slot_state() -> void:
+	var active: int = SaveSystem.get_active_slot()
+	for i in range(SaveSystem.SLOT_COUNT):
+		var btn: Button = _slot_buttons[i]
+		var summary: Dictionary = SaveSystem.slot_summary(i)
+		var exists: bool = not summary.is_empty()
+		var coins: int = 0
+		if exists and summary.has("economy"):
+			var eco_data: Dictionary = summary["economy"]
+			coins = int(eco_data.get("coins", 0))
+		if exists:
+			btn.text = "Slot %d\n%d coins" % [i + 1, coins]
+		else:
+			btn.text = "Slot %d\n(empty)" % (i + 1)
+		var color: Color = SLOT_ACTIVE_COLOR if i == active else SLOT_INACTIVE_COLOR
+		btn.add_theme_color_override("font_color", color)
+		_slot_delete_buttons[i].disabled = not exists
 	var data: Dictionary = SaveSystem.load_data()
 	continue_button.disabled = data.is_empty()
-	if OS.get_name() == "Web":
-		quit_button.visible = false
 
 func _setup_demo_board() -> void:
 	_generator = BoardGenerator.new()
@@ -119,6 +166,19 @@ func _on_continue() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 func _on_new_game() -> void:
+	if not SaveSystem.load_data().is_empty():
+		_confirm_overwrite()
+		return
+	_start_fresh_run()
+
+func _confirm_overwrite() -> void:
+	var dialog := ConfirmationDialog.new()
+	dialog.dialog_text = "Slot %d hat einen Spielstand. Überschreiben?" % (SaveSystem.get_active_slot() + 1)
+	dialog.confirmed.connect(_start_fresh_run)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _start_fresh_run() -> void:
 	SaveSystem.save_data({})
 	Economy.reset()
 	Economy.permanent_multiplier = 1.0
@@ -126,6 +186,21 @@ func _on_new_game() -> void:
 	SkillTree.reset()
 	PrestigeManager.reset()
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+
+func _on_slot_pressed(slot: int) -> void:
+	SaveSystem.set_active_slot(slot)
+	_refresh_slot_state()
+
+func _on_slot_delete_pressed(slot: int) -> void:
+	var dialog := ConfirmationDialog.new()
+	dialog.dialog_text = "Slot %d wirklich löschen?" % (slot + 1)
+	dialog.confirmed.connect(_delete_slot.bind(slot))
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _delete_slot(slot: int) -> void:
+	SaveSystem.delete_slot(slot)
+	_refresh_slot_state()
 
 func _on_quit() -> void:
 	get_tree().quit()

@@ -41,3 +41,38 @@ func test_import_parses_json_string():
 	assert_bool(success).is_equal(true)
 	var loaded: Dictionary = save_system.load_data()
 	assert_int(int(loaded["coins"])).is_equal(99)
+
+func test_slots_are_isolated():
+	var slot_system: Node = load("res://systems/save_system.gd").new()
+	add_child(slot_system)
+	slot_system.set_active_slot(0)
+	slot_system.save_data({"coins": 100})
+	slot_system.set_active_slot(1)
+	slot_system.save_data({"coins": 200})
+	slot_system.set_active_slot(2)
+	slot_system.save_data({"coins": 300})
+	slot_system.set_active_slot(0)
+	assert_int(int(slot_system.load_data()["coins"])).is_equal(100)
+	slot_system.set_active_slot(1)
+	assert_int(int(slot_system.load_data()["coins"])).is_equal(200)
+	slot_system.set_active_slot(2)
+	assert_int(int(slot_system.load_data()["coins"])).is_equal(300)
+	for i in range(3):
+		slot_system.delete_slot(i)
+	var dir := DirAccess.open("user://")
+	if dir and dir.file_exists("meta.json"):
+		dir.remove("meta.json")
+
+func test_slot_exists_false_until_saved():
+	var slot_system: Node = load("res://systems/save_system.gd").new()
+	add_child(slot_system)
+	slot_system.delete_slot(1)
+	assert_bool(slot_system.slot_exists(1)).is_equal(false)
+	slot_system.set_active_slot(1)
+	slot_system.save_data({"coins": 5})
+	assert_bool(slot_system.slot_exists(1)).is_equal(true)
+	slot_system.delete_slot(1)
+	assert_bool(slot_system.slot_exists(1)).is_equal(false)
+	var dir := DirAccess.open("user://")
+	if dir and dir.file_exists("meta.json"):
+		dir.remove("meta.json")
