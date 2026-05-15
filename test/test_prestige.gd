@@ -9,6 +9,8 @@ func before_test() -> void:
 	Economy.reset()
 	Economy.permanent_multiplier = 1.0
 	SkillTree.reset()
+	AchievementManager.reset()
+	AchievementManager.unlocked["first_prestige"] = true
 
 func test_stars_formula():
 	pm.lifetime_coins = 4000.0
