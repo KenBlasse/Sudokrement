@@ -37,6 +37,7 @@ func prestige() -> int:
 	prestige_count += 1
 	boards_solved_current_tier = 0
 	prestiged.emit(gained)
+	GameEvents.prestiged.emit(gained)
 	return gained
 
 func serialize() -> Dictionary:

@@ -45,6 +45,7 @@ func unlock(node_id: String) -> bool:
 	unlocked[node_id] = true
 	node_unlocked.emit(node_id)
 	stars_changed.emit(stars)
+	GameEvents.skill_unlocked.emit(node_id)
 	return true
 
 func add_stars(amount: int) -> void:

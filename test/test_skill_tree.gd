@@ -34,3 +34,13 @@ func test_unlock_succeeds_with_prerequisite():
 	tree.unlock("naked_single")
 	var ok: bool = tree.unlock("hidden_single")
 	assert_bool(ok).is_equal(true)
+
+func test_unlock_emits_on_bus() -> void:
+	tree.stars = 10
+	var received: Array = []
+	var connector := func(id: String) -> void: received.append(id)
+	GameEvents.skill_unlocked.connect(connector)
+	tree.unlock("naked_single")
+	GameEvents.skill_unlocked.disconnect(connector)
+	assert_int(received.size()).is_equal(1)
+	assert_str(received[0]).is_equal("naked_single")
