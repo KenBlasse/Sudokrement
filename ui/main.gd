@@ -36,12 +36,15 @@ func _load_game() -> void:
 		SkillTree.deserialize(data["skill_tree"])
 	if data.has("prestige"):
 		PrestigeManager.deserialize(data["prestige"])
+	if data.has("achievements"):
+		AchievementManager.deserialize(data["achievements"])
 
 func _save_game() -> void:
 	SaveSystem.save_data({
 		"economy": Economy.serialize(),
 		"skill_tree": SkillTree.serialize(),
 		"prestige": PrestigeManager.serialize(),
+		"achievements": AchievementManager.serialize(),
 	})
 
 func _on_menu_requested() -> void:
