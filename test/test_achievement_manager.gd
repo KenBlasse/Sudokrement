@@ -42,3 +42,47 @@ func test_add_stars_called_on_unlock() -> void:
 	for i in range(10):
 		GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 120.0, "mistakes": 5, "combos_in_board": 0})
 	assert_int(SkillTree.stars).is_equal(stars_before + 1)
+
+func test_event_hardcore_only_on_hardcore() -> void:
+	GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 30.0, "mistakes": 0, "combos_in_board": 0})
+	assert_bool(AchievementManager.unlocked.get("first_hardcore", false)).is_false()
+	GameEvents.board_solved.emit({"difficulty": "hardcore", "time_seconds": 30.0, "mistakes": 0, "combos_in_board": 0})
+	assert_bool(AchievementManager.unlocked.get("first_hardcore", false)).is_true()
+
+func test_event_first_prestige() -> void:
+	GameEvents.prestiged.emit(3)
+	assert_bool(AchievementManager.unlocked.get("first_prestige", false)).is_true()
+
+func test_event_solvers_branch_skill() -> void:
+	GameEvents.skill_unlocked.emit("naked_single")
+	assert_bool(AchievementManager.unlocked.get("unlock_solvers_branch", false)).is_true()
+
+func test_event_economy_branch_skill_does_not_unlock_solvers_ach() -> void:
+	GameEvents.skill_unlocked.emit("coin_plus_10")
+	assert_bool(AchievementManager.unlocked.get("unlock_solvers_branch", false)).is_false()
+
+func test_condition_no_mistakes_required() -> void:
+	GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 120.0, "mistakes": 2, "combos_in_board": 0})
+	assert_bool(AchievementManager.unlocked.get("perfect_board", false)).is_false()
+	GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 120.0, "mistakes": 0, "combos_in_board": 0})
+	assert_bool(AchievementManager.unlocked.get("perfect_board", false)).is_true()
+
+func test_condition_speedrun_60s() -> void:
+	GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 75.0, "mistakes": 5, "combos_in_board": 0})
+	assert_bool(AchievementManager.unlocked.get("speedrun_60s", false)).is_false()
+	GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 45.0, "mistakes": 5, "combos_in_board": 0})
+	assert_bool(AchievementManager.unlocked.get("speedrun_60s", false)).is_true()
+
+func test_condition_five_combos_in_board() -> void:
+	GameEvents.board_solved.emit({"difficulty": "casual", "time_seconds": 120.0, "mistakes": 5, "combos_in_board": 5})
+	assert_bool(AchievementManager.unlocked.get("five_combos_one_board", false)).is_true()
+
+func test_lifetime_coins_observed_tracks() -> void:
+	PrestigeManager.record_coins(9999.0)
+	assert_bool(AchievementManager.unlocked.get("earn_10k_lifetime", false)).is_false()
+	PrestigeManager.record_coins(2.0)
+	assert_bool(AchievementManager.unlocked.get("earn_10k_lifetime", false)).is_true()
+
+func test_unknown_check_does_not_crash() -> void:
+	AchievementManager._check_passes("nonsense_check", {})
+	assert_bool(true).is_true()
