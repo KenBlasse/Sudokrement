@@ -51,7 +51,7 @@ func _process(delta: float) -> void:
 	timer_label.text = "%02d:%02d" % [m, s]
 
 func _on_coins_changed(new_total: float) -> void:
-	coins_label.text = "%d" % int(new_total)
+	coins_label.text = NumberFormat.coins(new_total)
 	_pop(coins_label)
 
 func _pop(label: Label) -> void:

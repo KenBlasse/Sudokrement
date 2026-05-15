@@ -23,7 +23,7 @@ func _hint_cost() -> float:
 	return HINT_BASE_COST * pow(HINT_COST_SCALING, _hint_purchases)
 
 func _hint_label() -> String:
-	return "Hint (+1 cell) — %d coins" % int(_hint_cost())
+	return "Hint (+1 cell) — %s coins" % NumberFormat.coins(_hint_cost())
 
 func _on_coins_changed(total: float) -> void:
 	hint_button.disabled = total < _hint_cost()

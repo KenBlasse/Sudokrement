@@ -90,7 +90,7 @@ func _refresh_slot_state() -> void:
 			var eco_data: Dictionary = summary["economy"]
 			coins = int(eco_data.get("coins", 0))
 		if exists:
-			btn.text = "Slot %d\n%d coins" % [i + 1, coins]
+			btn.text = "Slot %d\n%s coins" % [i + 1, NumberFormat.coins(float(coins))]
 		else:
 			btn.text = "Slot %d\n(empty)" % (i + 1)
 		var color: Color = SLOT_ACTIVE_COLOR if i == active else SLOT_INACTIVE_COLOR
