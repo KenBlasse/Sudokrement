@@ -46,8 +46,10 @@ jobs:
       - name: Web export
         run: |
           mkdir -p build
-          godot --headless --path . --export-release "${EXPORT_PRESET}" build/index.html
+          godot --headless --path . --import || true
+          godot --headless --path . --export-release "${EXPORT_PRESET}" build/index.html || true
           ls -la build/
+          test -f build/index.html && test -f build/index.wasm
 
       - uses: actions/upload-pages-artifact@v3
         with:
