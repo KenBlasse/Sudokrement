@@ -10,6 +10,8 @@ var lives_left: int = 3
 var rows_awarded: Dictionary = {}
 var cols_awarded: Dictionary = {}
 var blocks_awarded: Dictionary = {}
+var mistakes_this_run: int = 0
+var combos_this_run: int = 0
 
 func _init(board_size: int) -> void:
 	size = board_size
