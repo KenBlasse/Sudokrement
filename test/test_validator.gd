@@ -49,3 +49,22 @@ func test_board_complete_only_when_all_correct():
 		for c in range(9):
 			b.cells[r][c].value = b.solution[r][c]
 	assert_bool(v.is_board_complete(b)).is_equal(true)
+
+func test_board_full_true_when_all_filled_even_if_wrong():
+	var v := Validator.new()
+	var b := _make_board_with_solution()
+	for r in range(9):
+		for c in range(9):
+			var wrong: int = (b.solution[r][c] % 9) + 1
+			b.cells[r][c].value = wrong
+	assert_bool(v.is_board_full(b)).is_equal(true)
+	assert_bool(v.is_board_complete(b)).is_equal(false)
+
+func test_board_full_false_when_any_cell_empty():
+	var v := Validator.new()
+	var b := _make_board_with_solution()
+	for r in range(9):
+		for c in range(9):
+			b.cells[r][c].value = b.solution[r][c]
+	b.cells[4][4].value = 0
+	assert_bool(v.is_board_full(b)).is_equal(false)

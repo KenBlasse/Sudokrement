@@ -7,6 +7,8 @@ extends VBoxContainer
 
 var validator: Validator
 var generator: BoardGenerator
+const STANDARD_LIVES: int = 3
+var _lives: int = STANDARD_LIVES
 
 func _ready() -> void:
 	validator = Validator.new()
@@ -15,6 +17,7 @@ func _ready() -> void:
 	number_pad.erase_pressed.connect(_on_erase_pressed)
 	sudoku_board.cell_filled.connect(_on_cell_filled)
 	top_bar.menu_requested.connect(_on_menu_requested)
+	top_bar.mode_changed.connect(_on_mode_changed)
 	var shop: VBoxContainer = side_tabs.get_node("Shop")
 	shop.hint_purchased.connect(_on_hint_purchased)
 	_load_game()
@@ -69,11 +72,23 @@ func _current_tier() -> String:
 
 func _start_new_board() -> void:
 	var board := generator.generate(_current_tier())
+	sudoku_board.hide_wrong = Economy.difficulty_mode == "hardcore"
 	sudoku_board.set_board(board)
 	top_bar.reset_timer()
+	_lives = STANDARD_LIVES
+	_refresh_lives_label()
 	var shop := side_tabs.get_node_or_null("Shop")
 	if shop and shop.has_method("reset_board_session"):
 		shop.reset_board_session()
+
+func _refresh_lives_label() -> void:
+	if Economy.difficulty_mode == "standard":
+		top_bar.set_lives(_lives)
+	else:
+		top_bar.set_lives(-1)
+
+func _on_mode_changed(_mode: String) -> void:
+	_start_new_board()
 
 func _on_number_pressed(value: int) -> void:
 	sudoku_board.input_value(value)
@@ -82,9 +97,22 @@ func _on_erase_pressed() -> void:
 	sudoku_board.input_value(0)
 
 func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
+	var board: Board = sudoku_board.board
+	if value > 0 and not is_correct and Economy.difficulty_mode == "standard":
+		_lives -= 1
+		_refresh_lives_label()
+		if _lives <= 0:
+			_start_new_board()
+			return
+	if Economy.difficulty_mode == "hardcore" and value > 0 and validator.is_board_full(board):
+		if validator.is_board_complete(board):
+			_award_board_complete(board)
+		else:
+			SoundManager.wrong()
+			_start_new_board()
+		return
 	if not is_correct or value == 0:
 		return
-	var board: Board = sudoku_board.board
 	var cell: Cell = board.cells[row][col]
 	if cell.awarded:
 		return
@@ -130,13 +158,16 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 	if combo_triggered:
 		SoundManager.combo()
 	if validator.is_board_complete(board):
-		var before2: float = Economy.coins
-		Economy.award_board_complete(0.0)
-		PrestigeManager.record_coins(Economy.coins - before2)
-		PrestigeManager.record_board_solved()
-		SoundManager.board_complete()
-		var prestige_tab := side_tabs.get_node_or_null("Prestige")
-		if prestige_tab:
-			prestige_tab._refresh()
-		_save_game()
-		_start_new_board()
+		_award_board_complete(board)
+
+func _award_board_complete(_board: Board) -> void:
+	var before2: float = Economy.coins
+	Economy.award_board_complete(0.0)
+	PrestigeManager.record_coins(Economy.coins - before2)
+	PrestigeManager.record_board_solved()
+	SoundManager.board_complete()
+	var prestige_tab := side_tabs.get_node_or_null("Prestige")
+	if prestige_tab:
+		prestige_tab._refresh()
+	_save_game()
+	_start_new_board()

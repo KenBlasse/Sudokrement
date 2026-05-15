@@ -31,3 +31,10 @@ func is_board_complete(board: Board) -> bool:
 			if board.cells[r][c].value != board.solution[r][c]:
 				return false
 	return true
+
+func is_board_full(board: Board) -> bool:
+	for r in range(board.size):
+		for c in range(board.size):
+			if board.cells[r][c].value == 0:
+				return false
+	return true

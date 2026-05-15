@@ -17,6 +17,7 @@ var board: Board
 var validator: Validator
 var selected_row: int = -1
 var selected_col: int = -1
+var hide_wrong: bool = false
 var _cell_buttons: Array = []
 var _block_grids: Array = []
 
@@ -110,7 +111,7 @@ func _update_button(btn: Button, r: int, c: int) -> void:
 	var color: Color
 	if cell.given:
 		color = COLOR_GIVEN
-	elif cell.value > 0 and cell.value != board.solution[r][c]:
+	elif cell.value > 0 and cell.value != board.solution[r][c] and not hide_wrong:
 		color = COLOR_WRONG
 	else:
 		color = COLOR_USER_CORRECT
@@ -138,7 +139,8 @@ func input_value(value: int) -> void:
 		_flash_cell(btn, Color(0, 0.94, 1, 1))
 		SoundManager.correct()
 	elif value > 0 and not correct:
-		_flash_cell(btn, Color(1, 0.2, 0.45, 1))
+		if not hide_wrong:
+			_flash_cell(btn, Color(1, 0.2, 0.45, 1))
 		SoundManager.wrong()
 	elif value == 0:
 		SoundManager.click()
