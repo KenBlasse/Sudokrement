@@ -39,9 +39,77 @@ func test_prestige_resets_economy_and_grants_stars():
 func test_prestige_increases_permanent_multiplier():
 	pm.lifetime_coins = 4000.0
 	pm.boards_solved_current_tier = 25
-	var before: float = Economy.permanent_multiplier
 	pm.prestige()
-	assert_float(Economy.permanent_multiplier).is_equal_approx(before + 0.02, 0.001)
+	var expected: float = 1.0 + 0.15 * log(1.0 + 2.0)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(expected, 0.0001)
+
+func test_total_stars_earned_accumulates():
+	pm.lifetime_coins = 4000.0
+	pm.boards_solved_current_tier = 25
+	pm.prestige()
+	assert_int(pm.total_stars_earned).is_equal(2)
+	pm.lifetime_coins = 9000.0
+	pm.boards_solved_current_tier = 25
+	pm.prestige()
+	assert_int(pm.total_stars_earned).is_equal(5)
+
+func test_permanent_multiplier_follows_log_curve():
+	Economy._recompute_permanent_multiplier(0)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(1.0, 0.0001)
+	Economy._recompute_permanent_multiplier(100)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(1.0 + 0.15 * log(101.0), 0.0001)
+	Economy._recompute_permanent_multiplier(10000)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(1.0 + 0.15 * log(10001.0), 0.0001)
+
+func test_multiplier_monotonic_over_prestiges():
+	var prev: float = Economy.permanent_multiplier
+	for i in range(3):
+		pm.lifetime_coins = 4000.0
+		pm.boards_solved_current_tier = 25
+		pm.prestige()
+		assert_float(Economy.permanent_multiplier).is_greater_equal(prev)
+		prev = Economy.permanent_multiplier
+
+func test_reset_clears_total_stars_earned():
+	pm.lifetime_coins = 4000.0
+	pm.boards_solved_current_tier = 25
+	pm.prestige()
+	assert_int(pm.total_stars_earned).is_greater(0)
+	pm.reset()
+	assert_int(pm.total_stars_earned).is_equal(0)
+
+func test_save_roundtrip_preserves_total_stars():
+	pm.lifetime_coins = 4000.0
+	pm.boards_solved_current_tier = 25
+	pm.prestige()
+	var saved: Dictionary = pm.serialize()
+	var mult_before: float = Economy.permanent_multiplier
+
+	var pm2: Node = load("res://systems/prestige_manager.gd").new()
+	add_child(pm2)
+	Economy.permanent_multiplier = 1.0
+	pm2.deserialize(saved)
+	assert_int(pm2.total_stars_earned).is_equal(pm.total_stars_earned)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(mult_before, 0.0001)
+
+func test_legacy_save_migrates_to_total_stars():
+	# Alter Save: kein total_stars_earned, Economy hat permanent_multiplier=1.50
+	Economy.permanent_multiplier = 1.50
+	var legacy_data: Dictionary = {
+		"lifetime_coins": 0.0,
+		"boards_solved_current_tier": 0,
+		"prestige_count": 1,
+	}
+	pm.deserialize(legacy_data)
+	assert_int(pm.total_stars_earned).is_equal(50)
+	var expected: float = 1.0 + 0.15 * log(51.0)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(expected, 0.0001)
+
+func test_legacy_save_with_mult_1_0_migrates_to_zero_stars():
+	Economy.permanent_multiplier = 1.0
+	pm.deserialize({"lifetime_coins": 0.0, "boards_solved_current_tier": 0, "prestige_count": 0})
+	assert_int(pm.total_stars_earned).is_equal(0)
+	assert_float(Economy.permanent_multiplier).is_equal_approx(1.0, 0.0001)
 
 func test_record_coins_emits_lifetime_changed() -> void:
 	var received: Array = []
