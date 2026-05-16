@@ -16,10 +16,16 @@ const COMBO_BONUS: Dictionary = {
 
 const BOARD_COMPLETE_BONUS: float = 100.0
 
+const PERMANENT_MULT_BASE: float = 0.15
+
 var coins: float = 0.0
 var permanent_multiplier: float = 1.0
 var run_multiplier: float = 1.0
 var difficulty_mode: String = "casual"
+
+func _recompute_permanent_multiplier(total_stars: int) -> void:
+	var stars: int = max(total_stars, 0)
+	permanent_multiplier = 1.0 + PERMANENT_MULT_BASE * log(1.0 + float(stars))
 
 func reset() -> void:
 	coins = 0.0
