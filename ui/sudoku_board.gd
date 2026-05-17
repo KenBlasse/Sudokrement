@@ -145,6 +145,8 @@ func input_value(value: int) -> void:
 	elif value == 0:
 		SoundManager.click()
 	cell_filled.emit(selected_row, selected_col, value, correct)
+	if value > 0:
+		GameEvents.cell_filled.emit(correct)
 
 func _flash_cell(btn: Button, color: Color) -> void:
 	btn.pivot_offset = btn.size * 0.5
