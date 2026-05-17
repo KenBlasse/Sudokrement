@@ -57,3 +57,14 @@ func test_tick_early_returns_when_count_zero() -> void:
 	StreakManager._tick(100.0)
 	assert_int(StreakManager.count).is_equal(0)
 	assert_float(StreakManager.time_left).is_equal_approx(0.0, 0.001)
+
+func test_combo_updates_economy_run_multiplier() -> void:
+	for i in range(5):
+		GameEvents.combo_triggered.emit("row")
+	assert_float(Economy.run_multiplier).is_equal_approx(2.0, 0.001)
+
+func test_reset_restores_economy_run_multiplier() -> void:
+	GameEvents.combo_triggered.emit("row")
+	assert_float(Economy.run_multiplier).is_equal_approx(1.2, 0.001)
+	GameEvents.cell_filled.emit(false)
+	assert_float(Economy.run_multiplier).is_equal_approx(1.0, 0.001)
