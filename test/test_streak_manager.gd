@@ -1,0 +1,97 @@
+extends GdUnitTestSuite
+
+func before_test() -> void:
+	StreakManager.reset()
+	Economy.reset()
+
+func test_combo_increments_count_and_multiplier() -> void:
+	GameEvents.combo_triggered.emit("row")
+	assert_int(StreakManager.count).is_equal(1)
+	assert_float(StreakManager.multiplier).is_equal_approx(1.2, 0.001)
+	GameEvents.combo_triggered.emit("column")
+	GameEvents.combo_triggered.emit("block")
+	assert_int(StreakManager.count).is_equal(3)
+	assert_float(StreakManager.multiplier).is_equal_approx(1.6, 0.001)
+
+func test_multiplier_caps_at_three() -> void:
+	for i in range(15):
+		GameEvents.combo_triggered.emit("row")
+	assert_int(StreakManager.count).is_equal(15)
+	assert_float(StreakManager.multiplier).is_equal_approx(3.0, 0.001)
+
+func test_wrong_cell_resets() -> void:
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.combo_triggered.emit("row")
+	assert_int(StreakManager.count).is_equal(2)
+	GameEvents.cell_filled.emit(false)
+	assert_int(StreakManager.count).is_equal(0)
+	assert_float(StreakManager.multiplier).is_equal_approx(1.0, 0.001)
+
+func test_correct_cell_does_not_reset() -> void:
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.cell_filled.emit(true)
+	assert_int(StreakManager.count).is_equal(2)
+
+func test_time_expires_resets() -> void:
+	GameEvents.combo_triggered.emit("row")
+	StreakManager._tick(16.0)
+	assert_int(StreakManager.count).is_equal(0)
+	assert_float(StreakManager.multiplier).is_equal_approx(1.0, 0.001)
+
+func test_combo_refreshes_window() -> void:
+	GameEvents.combo_triggered.emit("row")
+	StreakManager._tick(10.0)
+	GameEvents.combo_triggered.emit("row")
+	StreakManager._tick(10.0)
+	assert_int(StreakManager.count).is_equal(2)
+
+func test_prestige_resets() -> void:
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.prestiged.emit(5)
+	assert_int(StreakManager.count).is_equal(0)
+	assert_float(StreakManager.multiplier).is_equal_approx(1.0, 0.001)
+
+func test_tick_early_returns_when_count_zero() -> void:
+	StreakManager._tick(100.0)
+	assert_int(StreakManager.count).is_equal(0)
+	assert_float(StreakManager.time_left).is_equal_approx(0.0, 0.001)
+
+func test_combo_updates_economy_run_multiplier() -> void:
+	for i in range(5):
+		GameEvents.combo_triggered.emit("row")
+	assert_float(Economy.run_multiplier).is_equal_approx(2.0, 0.001)
+
+func test_reset_restores_economy_run_multiplier() -> void:
+	GameEvents.combo_triggered.emit("row")
+	assert_float(Economy.run_multiplier).is_equal_approx(1.2, 0.001)
+	GameEvents.cell_filled.emit(false)
+	assert_float(Economy.run_multiplier).is_equal_approx(1.0, 0.001)
+
+func test_streak_changed_signal_emits_payload() -> void:
+	var received: Array = []
+	var connector := func(c: int, m: float, t: float, w: float) -> void:
+		received.append({"count": c, "mult": m, "time_left": t, "window": w})
+	StreakManager.streak_changed.connect(connector)
+	GameEvents.combo_triggered.emit("row")
+	StreakManager.streak_changed.disconnect(connector)
+	assert_int(received.size()).is_equal(1)
+	assert_int(received[0]["count"]).is_equal(1)
+	assert_float(received[0]["mult"]).is_equal_approx(1.2, 0.001)
+	assert_float(received[0]["time_left"]).is_equal_approx(15.0, 0.001)
+	assert_float(received[0]["window"]).is_equal_approx(15.0, 0.001)
+
+func test_cell_filled_false_via_bus_resets() -> void:
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.cell_filled.emit(false)
+	assert_int(StreakManager.count).is_equal(0)
+
+func test_award_combo_uses_new_multiplier_after_streak_update() -> void:
+	Economy.coins = 0.0
+	Economy.permanent_multiplier = 1.0
+	GameEvents.combo_triggered.emit("row")
+	Economy.award_combo("row")
+	# row-Bonus = 10.0 × difficulty(casual=1.0) × perm(1.0) × run(1.2) = 12.0
+	assert_float(Economy.coins).is_equal_approx(12.0, 0.01)

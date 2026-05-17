@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://ui/top_bar.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/icons/coin.svg" id="2"]
 [ext_resource type="Texture2D" path="res://assets/icons/star.svg" id="3"]
 [ext_resource type="Texture2D" path="res://assets/icons/heart.svg" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/StreakIndicator.tscn" id="5"]
 
 [node name="TopBar" type="HBoxContainer"]
 script = ExtResource("1")
@@ -18,6 +19,11 @@ stretch_mode = 5
 
 [node name="CoinsLabel" type="Label" parent="."]
 text = "0"
+
+[node name="StreakSpacer" type="Control" parent="."]
+custom_minimum_size = Vector2(12, 0)
+
+[node name="StreakIndicator" parent="." instance=ExtResource("5")]
 
 [node name="DiffSpacer" type="Control" parent="."]
 custom_minimum_size = Vector2(16, 0)
