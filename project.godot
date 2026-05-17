@@ -25,6 +25,7 @@ PrestigeManager="*res://systems/prestige_manager.gd"
 SoundManager="*res://systems/sound_manager.gd"
 AchievementManager="*res://systems/achievement_manager.gd"
 NumberFormat="*res://systems/number_format.gd"
+StreakManager="*res://systems/streak_manager.gd"
 
 [display]
 
