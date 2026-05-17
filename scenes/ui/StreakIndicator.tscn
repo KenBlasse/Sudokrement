@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/streak_indicator.gd" id="1"]
+
+[node name="StreakIndicator" type="HBoxContainer"]
+script = ExtResource("1")
+theme_override_constants/separation = 6
+visible = false
+
+[node name="StreakLabel" type="Label" parent="."]
+text = ""
+
+[node name="TimerBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(60, 6)
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 15.0
+show_percentage = false
