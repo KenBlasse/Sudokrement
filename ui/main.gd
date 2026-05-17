@@ -129,11 +129,11 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 	var combo_triggered: bool = false
 	if validator.is_row_complete(board, row) and not board.rows_awarded.get(row, false):
 		board.rows_awarded[row] = true
+		board.combos_this_run += 1
+		GameEvents.combo_triggered.emit("row")
 		var b: float = Economy.coins
 		Economy.award_combo("row")
 		PrestigeManager.record_coins(Economy.coins - b)
-		board.combos_this_run += 1
-		GameEvents.combo_triggered.emit("row")
 		var cells: Array = []
 		for c in range(board.size):
 			cells.append(Vector2i(row, c))
@@ -141,11 +141,11 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 		combo_triggered = true
 	if validator.is_column_complete(board, col) and not board.cols_awarded.get(col, false):
 		board.cols_awarded[col] = true
+		board.combos_this_run += 1
+		GameEvents.combo_triggered.emit("column")
 		var b: float = Economy.coins
 		Economy.award_combo("column")
 		PrestigeManager.record_coins(Economy.coins - b)
-		board.combos_this_run += 1
-		GameEvents.combo_triggered.emit("column")
 		var cells: Array = []
 		for r in range(board.size):
 			cells.append(Vector2i(r, col))
@@ -154,11 +154,11 @@ func _on_cell_filled(row: int, col: int, value: int, is_correct: bool) -> void:
 	var block_key: int = (row / 3) * 3 + (col / 3)
 	if validator.is_block_complete(board, row, col) and not board.blocks_awarded.get(block_key, false):
 		board.blocks_awarded[block_key] = true
+		board.combos_this_run += 1
+		GameEvents.combo_triggered.emit("block")
 		var b: float = Economy.coins
 		Economy.award_combo("block")
 		PrestigeManager.record_coins(Economy.coins - b)
-		board.combos_this_run += 1
-		GameEvents.combo_triggered.emit("block")
 		var cells: Array = []
 		var br: int = (row / 3) * 3
 		var bc: int = (col / 3) * 3

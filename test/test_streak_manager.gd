@@ -87,3 +87,11 @@ func test_cell_filled_false_via_bus_resets() -> void:
 	GameEvents.combo_triggered.emit("row")
 	GameEvents.cell_filled.emit(false)
 	assert_int(StreakManager.count).is_equal(0)
+
+func test_award_combo_uses_new_multiplier_after_streak_update() -> void:
+	Economy.coins = 0.0
+	Economy.permanent_multiplier = 1.0
+	GameEvents.combo_triggered.emit("row")
+	Economy.award_combo("row")
+	# row-Bonus = 10.0 × difficulty(casual=1.0) × perm(1.0) × run(1.2) = 12.0
+	assert_float(Economy.coins).is_equal_approx(12.0, 0.01)
