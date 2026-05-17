@@ -81,3 +81,9 @@ func test_streak_changed_signal_emits_payload() -> void:
 	assert_float(received[0]["mult"]).is_equal_approx(1.2, 0.001)
 	assert_float(received[0]["time_left"]).is_equal_approx(15.0, 0.001)
 	assert_float(received[0]["window"]).is_equal_approx(15.0, 0.001)
+
+func test_cell_filled_false_via_bus_resets() -> void:
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.combo_triggered.emit("row")
+	GameEvents.cell_filled.emit(false)
+	assert_int(StreakManager.count).is_equal(0)
