@@ -12,3 +12,9 @@ func test_combo_increments_count_and_multiplier() -> void:
 	GameEvents.combo_triggered.emit("block")
 	assert_int(StreakManager.count).is_equal(3)
 	assert_float(StreakManager.multiplier).is_equal_approx(1.6, 0.001)
+
+func test_multiplier_caps_at_three() -> void:
+	for i in range(15):
+		GameEvents.combo_triggered.emit("row")
+	assert_int(StreakManager.count).is_equal(15)
+	assert_float(StreakManager.multiplier).is_equal_approx(3.0, 0.001)
