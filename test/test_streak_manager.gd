@@ -68,3 +68,16 @@ func test_reset_restores_economy_run_multiplier() -> void:
 	assert_float(Economy.run_multiplier).is_equal_approx(1.2, 0.001)
 	GameEvents.cell_filled.emit(false)
 	assert_float(Economy.run_multiplier).is_equal_approx(1.0, 0.001)
+
+func test_streak_changed_signal_emits_payload() -> void:
+	var received: Array = []
+	var connector := func(c: int, m: float, t: float, w: float) -> void:
+		received.append({"count": c, "mult": m, "time_left": t, "window": w})
+	StreakManager.streak_changed.connect(connector)
+	GameEvents.combo_triggered.emit("row")
+	StreakManager.streak_changed.disconnect(connector)
+	assert_int(received.size()).is_equal(1)
+	assert_int(received[0]["count"]).is_equal(1)
+	assert_float(received[0]["mult"]).is_equal_approx(1.2, 0.001)
+	assert_float(received[0]["time_left"]).is_equal_approx(15.0, 0.001)
+	assert_float(received[0]["window"]).is_equal_approx(15.0, 0.001)
